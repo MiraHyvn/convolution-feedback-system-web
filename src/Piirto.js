@@ -16,7 +16,8 @@ const vec2 kulmat_uv[4] = vec2[4](
 );
 
 void main() {
-    gl_Position = kulmat[gl_VertexID];
+    vec4 t = vec4(0.9, 0.9, 1, 1);
+    gl_Position = t * kulmat[gl_VertexID];
     uv = kulmat_uv[gl_VertexID];
 }
 `;
@@ -41,6 +42,7 @@ export class Piirto{
         const gl = this.haeKonteksti();
         if(gl != null) {
             this.luoShader(OLETUS_VSRC, OLETUS_FSRC);
+            this.fb = gl.createFramebuffer();
         }
     }
 
@@ -150,7 +152,26 @@ export class Piirto{
 
     piirraKuva(kuva) {
         const gl = this.haeKonteksti();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindTexture(gl.TEXTURE_2D, kuva);
+        gl.viewport(0, 0, 640, 512);
         this.piirra();
+    }
+
+    piirraKuvaan(mista, mihin) {
+        const gl = this.haeKonteksti();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.fb);
+        const level = 0;
+        gl.framebufferTexture2D(
+            gl.FRAMEBUFFER,
+            gl.COLOR_ATTACHMENT0,
+            gl.TEXTURE_2D,
+            mihin,
+            level
+        );
+        gl.bindTexture(gl.TEXTURE_2D, mista);
+        gl.viewport(0, 0, 256, 256);
+        this.piirra();
+        console.log(mihin);
     }
 }
