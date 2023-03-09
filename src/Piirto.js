@@ -26,6 +26,7 @@ const OLETUS_FSRC = `#version 300 es
 precision highp float;
 in vec2 uv;
 uniform sampler2D tekstuuri0;
+uniform float[49] uData;
 out vec4 color;
 
 void main(void) {
@@ -39,6 +40,8 @@ function lisaaTeksti(teksti) {
 
 export class Piirto{
     constructor() {
+        this.fb = null;
+        this.uniformPaikka = null;
         const gl = this.haeKonteksti();
         if(gl != null) {
             this.luoShader(OLETUS_VSRC, OLETUS_FSRC);
@@ -91,6 +94,7 @@ export class Piirto{
             return null;
         }
         this.kaytaShaderia(tulos);
+        this.uniformPaikka = gl.getUniformLocation(tulos, "uData");
         return tulos;
     }
 
@@ -177,5 +181,10 @@ export class Piirto{
         gl.bindTexture(gl.TEXTURE_2D, mista);
         gl.viewport(0, 0, 256, 256);
         this.piirra();
+    }
+
+    asetaUniform(uData) {
+        const gl = this.haeKonteksti();
+        gl.uniform1fv(this.uniformPaikka, uData);
     }
 }

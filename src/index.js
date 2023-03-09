@@ -38,6 +38,7 @@ const FSRC_KAANTEINEN = `#version 300 es
 precision highp float;
 in vec2 uv;
 uniform sampler2D tekstuuri0;
+uniform float uData[49];
 out vec4 color;
 
 void main(void) {
@@ -54,8 +55,10 @@ function main() {
     const shader_oletus = P.luoShader(VSRC, FSRC);
     const shader_kaanteinen = P.luoShader(VSRC, FSRC_KAANTEINEN);
     P.kaytaShaderia(shader_kaanteinen);
+    P.asetaUniform(new Float32Array(49));
     P.piirraKuvaan(kuva2, kuva1);
     P.kaytaShaderia(shader_oletus);
+    P.asetaUniform(new Float32Array(49));
     P.piirraKuva(kuva1);
 }
 
