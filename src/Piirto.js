@@ -123,9 +123,35 @@ export class Piirto{
         let i = 0;
         for(let y=0; y<256; y++) {
             for(let x=0; x < 256; x++) {
-                pixels[i] = x;
-                pixels[i+1] = y;
-                pixels[i+2] = (x+y)/2;
+                const f = x / width;
+                let r = Math.pow(f, 0.5);
+                let g = f;
+                let b = 0.3 + Math.pow(0.7 * f, 1.5);
+                const suola = 50;
+                const pippuri = 50;
+                //vähän suolaa
+                if(Math.random()*suola < 1) {
+                    r = 1;
+                }
+                if(Math.random()*100 < 1) {
+                    g = 1;
+                }
+                if(Math.random()*100 < 1) {
+                    b = 1;
+                }
+                //vähän pippuria
+                if(Math.random()*pippuri < 1) {
+                    r = 0;
+                }
+                if(Math.random()*100 < 1) {
+                    g = 0;
+                }
+                if(Math.random()*100 < 1) {
+                    b = 0;
+                }
+                pixels[i] = Math.floor(r*256);
+                pixels[i+1] = Math.floor(g*256);
+                pixels[i+2] = Math.floor(b*256);
                 pixels[i+3] = 255;
                 i+=4;
             }
