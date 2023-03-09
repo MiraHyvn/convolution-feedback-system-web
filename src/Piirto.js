@@ -90,8 +90,13 @@ export class Piirto{
             lisaaTeksti(gl.getProgramInfoLog(tulos));
             return null;
         }
-        gl.useProgram(tulos);
+        this.kaytaShaderia(tulos);
         return tulos;
+    }
+
+    kaytaShaderia(shader) {
+        const gl = this.haeKonteksti();
+        gl.useProgram(shader);
     }
 
     piirra() {
@@ -172,6 +177,5 @@ export class Piirto{
         gl.bindTexture(gl.TEXTURE_2D, mista);
         gl.viewport(0, 0, 256, 256);
         this.piirra();
-        console.log(mihin);
     }
 }
