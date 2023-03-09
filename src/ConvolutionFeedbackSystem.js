@@ -18,7 +18,7 @@ const vec2 kulmat_uv[4] = vec2[4](
 );
 
 void main() {
-    vec4 t = vec4(1, 1, 1, 1);
+    vec4 t = vec4(-1, -1, 1, 1);
     gl_Position = t * kulmat[gl_VertexID];
     uv = kulmat_uv[gl_VertexID];
 }
@@ -50,10 +50,10 @@ void main(void) {
         int x = i % 7;
         float yf = float(y);
         float xf = float(x);
-        vec2 d = vec2( (xf-3.0)/(512.0), (yf-3.0)/(512.0));
+        vec2 d = vec2( (xf-3.0)/(1024.0), (yf-3.0)/(1024.0));
         value += texture(tekstuuri0, uv + d).r * uData[i];
     }
-    color = mix(color0, vec4(value, value, value, 1), 0.05);
+    color = mix(color0, vec4(value, value, value, 1), 0.5);
 }
 `;
 
@@ -65,6 +65,7 @@ export class ConvolutionFeedbackSystem {
         this.shader_default = null;
         this.shader_convolution = null;
         this.piirto = null;
+        this.kaanto = 1;
         this.setup();
     }
 
@@ -106,8 +107,14 @@ export class ConvolutionFeedbackSystem {
         this.randomChangeConvolution();
         this.piirto.kaytaShaderia(this.shader_convolution);
         this.piirto.asetaUniform(this.convolutionMatrix);
-        this.piirto.piirraKuvaan(this.tx_front, this.tx_back);
-        this.piirto.piirraKuvaan(this.tx_back, this.tx_front);
+        if(this.kaanto == 1) {
+            this.piirto.piirraKuvaan(this.tx_back, this.tx_front);
+            this.kaanto = 0;
+        }
+        else {
+            this.piirto.piirraKuvaan(this.tx_front, this.tx_back);
+            this.kaanto = 1;
+        }
         this.piirto.kaytaShaderia(this.shader_default);
         this.piirto.piirraKuva(this.tx_front);
     }
@@ -116,7 +123,7 @@ export class ConvolutionFeedbackSystem {
         const changeN = Math.floor(Math.random()*4) + 1;
         for(let j = 0; j < changeN; j++) {
             const i = Math.floor(Math.random()*49);
-            this.convolutionMatrix[i] += Math.random()*0.02 - 0.01;
+            this.convolutionMatrix[i] += Math.random()*0.05 - 0.025;
             if(this.convolutionMatrix[i] < -1) {
                 this.convolutionMatrix[i] = -1;
             }

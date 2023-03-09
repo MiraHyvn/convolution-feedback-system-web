@@ -1,3 +1,4 @@
+const TEX_S = 512;
 const OLETUS_VSRC = `#version 300 es
 out vec2 uv;
 
@@ -16,7 +17,7 @@ const vec2 kulmat_uv[4] = vec2[4](
 );
 
 void main() {
-    vec4 t = vec4(0.9, 0.9, 1, 1);
+    vec4 t = vec4(1, 1, 1, 1);
     gl_Position = t * kulmat[gl_VertexID];
     uv = kulmat_uv[gl_VertexID];
 }
@@ -114,39 +115,39 @@ export class Piirto{
         gl.bindTexture(gl.TEXTURE_2D, tekstuuri);
         const level = 0;
         const internalFormat = gl.RGBA;
-        const width = 256;
-        const height = 256;
+        const width = TEX_S;
+        const height = TEX_S;
         const border = 0;
         const srcFormat = gl.RGBA;
         const srcType = gl.UNSIGNED_BYTE;
-        const pixels = new Uint8Array(256*256*4);
+        const pixels = new Uint8Array(TEX_S*TEX_S*4);
         let i = 0;
-        for(let y=0; y<256; y++) {
-            for(let x=0; x < 256; x++) {
+        for(let y=0; y<TEX_S; y++) {
+            for(let x=0; x < TEX_S; x++) {
                 const f = x / width;
                 let r = Math.pow(f, 0.5);
                 let g = f;
                 let b = 0.3 + Math.pow(0.7 * f, 1.5);
-                const suola = 50;
-                const pippuri = 50;
+                const suola = 20;
+                const pippuri = 20;
                 //vähän suolaa
                 if(Math.random()*suola < 1) {
                     r = 1;
                 }
-                if(Math.random()*100 < 1) {
+                if(Math.random()*suola < 1) {
                     g = 1;
                 }
-                if(Math.random()*100 < 1) {
+                if(Math.random()*suola < 1) {
                     b = 1;
                 }
                 //vähän pippuria
                 if(Math.random()*pippuri < 1) {
                     r = 0;
                 }
-                if(Math.random()*100 < 1) {
+                if(Math.random()*pippuri < 1) {
                     g = 0;
                 }
-                if(Math.random()*100 < 1) {
+                if(Math.random()*pippuri < 1) {
                     b = 0;
                 }
                 pixels[i] = Math.floor(r*256);
@@ -182,6 +183,11 @@ export class Piirto{
             gl.TEXTURE_MIN_FILTER, 
             gl.LINEAR
         );        
+        gl.texParameteri(
+            gl.TEXTURE_2D, 
+            gl.TEXTURE_MAG_FILTER, 
+            gl.LINEAR
+        );        
         return tekstuuri;
     }
 
@@ -189,7 +195,7 @@ export class Piirto{
         const gl = this.haeKonteksti();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindTexture(gl.TEXTURE_2D, kuva);
-        gl.viewport(0, 0, 640, 512);
+        gl.viewport(0, 0, 2048, 2048);
         this.piirra();
     }
 
@@ -205,7 +211,7 @@ export class Piirto{
             level
         );
         gl.bindTexture(gl.TEXTURE_2D, mista);
-        gl.viewport(0, 0, 256, 256);
+        gl.viewport(0, 0, TEX_S, TEX_S);
         this.piirra();
     }
 
